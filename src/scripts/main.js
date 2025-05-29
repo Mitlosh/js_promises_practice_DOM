@@ -1,17 +1,22 @@
 /* eslint-disable prefer-promise-reject-errors */
 'use strict';
 
-const notification = document.createElement('div');
-
-notification.setAttribute('data-qa', 'notification');
-
 const firstPromise = new Promise((resolve, reject) => {
-  document.addEventListener('click', () => {
-    resolve();
-  });
+  let clicked = false;
+  const handleClick = (e) => {
+    if (e.button === 0) {
+      clicked = true;
+      resolve('First promise was resolved');
+      document.removeEventListener('mousedown', handleClick);
+    }
+  };
+
+  document.addEventListener('mousedown', handleClick);
 
   setTimeout(() => {
-    reject();
+    if (!clicked) {
+      reject(new Error('First promise was rejected'));
+    }
   }, 3000);
 });
 
@@ -51,23 +56,35 @@ const thirdPromise = new Promise((resolve) => {
 
 firstPromise
   .then(() => {
+    const notification = document.createElement('div');
+
+    notification.setAttribute('data-qa', 'notification');
     notification.textContent = 'First promise was resolved';
     notification.classList.add('success');
     document.body.appendChild(notification);
   })
   .catch(() => {
+    const notification = document.createElement('div');
+
+    notification.setAttribute('data-qa', 'notification');
     notification.textContent = 'First promise was rejected';
     notification.classList.add('error');
     document.body.appendChild(notification);
   });
 
 secondPromise.then(() => {
+  const notification = document.createElement('div');
+
+  notification.setAttribute('data-qa', 'notification');
   notification.textContent = 'Second promise was resolved';
   notification.classList.add('success');
   document.body.appendChild(notification);
 });
 
 thirdPromise.then(() => {
+  const notification = document.createElement('div');
+
+  notification.setAttribute('data-qa', 'notification');
   notification.textContent = 'Third promise was resolved';
   notification.classList.add('success');
   document.body.appendChild(notification);
